@@ -14,9 +14,36 @@
 			padding: 0;
 			margin: 0;
 		}
+		body {
+			background: rgb(15,15,15);
+		}
+		* {
+			outline: none;
+			-webkit-tap-highlight-color: rgba(0,0,0,0);
+		}
+		#jump-btn {
+			position: absolute;
+			width: 100px;
+			height: 60px;
+			bottom: 40px;
+			left: 20px;
+			background: rgba(255,255,255,0.4);
+			border: 1px solid rgba(255,255,255,0.4);
+			border-radius: .8em;
+			font-size: 20px;
+			color: rgba(225,225,255,0.7);
+			cursor: pointer;
+			z-index: 1000;
+		}
+		#jump-btn:active {
+			background: rgba(255,255,255,0.6);
+			border: 1px solid rgba(255,255,255,1);
+			color: rgba(225,225,255,1);
+		}
 	</style>
 </head>
 <body>
+<button id="jump-btn" onclick="bounce()">Jump</button>
 <div id="static"></div>
 </body>
 </html>
