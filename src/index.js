@@ -22,6 +22,8 @@ let pasts = [];         // 之前的影子
 let interval=null;      // 现在正在跑的interval
 const savePathInterval=20; // 记录路径间隔
 
+// TODO tap使用方式 反墙跳(import) 画一关的地图
+
 // 物理引擎
 function initScene() {
     // 创建引擎
@@ -35,10 +37,11 @@ function initScene() {
         wireframes: false,
         background: '#ffffff',
         hasBounds: true,
-        showVelocity: true,
-        showIds: true
+        showVelocity: true,     // DeBug项 显示每个物品上的矢量
+        showIds: true           // DeBug项 显示每个物品的ID
     };
 
+    // 初始化地图
     initMap();
 
     // 安全墙体内部成员ID
@@ -86,6 +89,30 @@ function initScene() {
                 aimIt();
             }
         });
+    });
+}
+
+// 摇杆
+function initNipple() {
+    let controller = nipplejs.create({
+        zone: document.getElementById('static'),
+        mode: 'static',
+        position: {left: 'calc(100% - 80px)', top: 'calc(100% - 70px)'},
+        color: 'rgb(180,180,180)'
+    });
+    controller.on('move', function(evt, data) {
+        let x = data.position.x-appWidth+80;
+        // 给横向加速度
+        let force = Vector.create(x*0.005, 0);
+        addForce(force);
+    });
+    controller.on('start', function() {
+        if(firstStart) {
+            playHistory();
+            let pathId = historyPath.push([])-1;
+            interval = savePath(historyPath[pathId], me);
+            firstStart=false;
+        }
     });
 }
 
@@ -148,37 +175,20 @@ function initMap() {
     Composite.add(dwall, test);
 }
 
-// 摇杆
-function initNipple() {
-    let controller = nipplejs.create({
-        zone: document.getElementById('static'),
-        mode: 'static',
-        position: {left: 'calc(100% - 80px)', top: 'calc(100% - 70px)'},
-        color: 'rgb(180,180,180)'
-    });
-    controller.on('move', function(evt, data) {
-        let x = data.position.x-appWidth+80;
-        // 给横向加速度
-        let force = Vector.create(x*0.005, 0);
-        addForce(force);
-    });
-    controller.on('start', function() {
+// 给主角施加力
+function addForce(force) {
+    Body.applyForce(me, me.position, force);
+}
+
+// 主角弹跳纵向力
+function bounce() {
+    if(canBounce) {
         if(firstStart) {
             playHistory();
             let pathId = historyPath.push([])-1;
             interval = savePath(historyPath[pathId], me);
             firstStart=false;
         }
-    });
-}
-
-// 给主角施加力
-function addForce(force) {
-    Body.applyForce(me, me.position, force);
-}
-// 主角弹跳纵向力
-function bounce() {
-    if(canBounce) {
         Body.applyForce(me, me.position, {x: 0, y: -50*0.51});
         canBounce=false;
     }
@@ -238,16 +248,19 @@ function death() {
 
 // 胜利
 function aimIt() {
-    // TODO 成功逻辑
     console.log('success');
+    // 清理historyPath
+    historyPath = [];
+    // 停止记录路径
+    if(interval) clearInterval(interval);
     alert('success');
 }
 
+// 启动
 window.onload = () => {
     appWidth = document.body.clientWidth;
     appHeight = document.body.clientHeight-140;
     wholeHeight = document.body.clientHeight;
     initScene();
     initNipple();
-    setTimeout( () => {console.log(me);}, 2200);
 };
