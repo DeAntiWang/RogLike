@@ -414,8 +414,12 @@ window.onload = () => {
     let preX, preY;
     setTimeout(()=>{
         document.getElementsByTagName('canvas')[0].ontouchstart = evt => {
-            preX = evt.changedTouches[0].pageX;
-            preY = evt.changedTouches[0].pageY;
+            if(evt.targetTouches.length>=2) {
+                evt.preventDefault();
+            }else {
+                preX = evt.changedTouches[0].pageX;
+                preY = evt.changedTouches[0].pageY;
+            }
         };
         // document.getElementsByTagName('canvas')[0].ontouchmove = evt => {
         //     evt.preventDefault();
