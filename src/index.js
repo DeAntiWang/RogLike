@@ -34,11 +34,11 @@ function initScene() {
     let options = {
         width: appWidth,
         height: appHeight,
-        wireframes: false,
-        background: '#ffffff',
+        wireframes: true,
+        background: '#0f0f13',
         hasBounds: true,
         showVelocity: true,     // DeBug项 显示每个物品上的矢量
-        showIds: true           // DeBug项 显示每个物品的ID
+        // showIds: true           // DeBug项 显示每个物品的ID
     };
 
     // 初始化地图
@@ -128,55 +128,100 @@ function initMap() {
             render: {
                 fillStyle: 'black'
             }
-        }), // 左墙
+        }),           // 左墙
         rightWall = Bodies.rectangle(appWidth+2, appHeight/2, 1, appHeight, {
             isStatic: true,
             render: {
                 fillStyle: 'black'
             }
-        }), // 右墙
+        }),  // 右墙
         ceil = Bodies.rectangle(appWidth/2, -2, appWidth, 1, {
             isStatic: true,
             render: {
                 fillStyle: 'black'
             }
-        }), // 天花板
-        ground = Bodies.rectangle(appWidth/2, 580, appWidth, 32, {
-            isStatic: true,
-            render: {
-                fillStyle: 'black'
-            }
-        }); // 地板
+        }),                 // 天花板
+        // ground = Bodies.rectangle(appWidth/2, appHeight-2, appWidth, 1, {
+        //     isStatic: true,
+        //     render: {
+        //         fillStyle: 'black'
+        //     }
+        // }),      // 地板
+        item1 = Bodies.rectangle(appWidth/2-4, (appHeight*0.6)/2, 8, appHeight*0.6, {
+            isStatic: true
+        }),
+        item2 = Bodies.rectangle(appWidth*0.75, appHeight*0.2, 100, 8, {
+            isStatic: true
+        }),
+        item3 = Bodies.rectangle(appWidth*0.75, appHeight*0.35, 100, 8, {
+            isStatic: true
+        }),
+        item4 = Bodies.rectangle(appWidth*0.75, appHeight*0.50, 100, 8, {
+            isStatic: true
+        }),
+        item5 = Bodies.rectangle(appWidth*0.75, appHeight*0.65, 100, 8, {
+            isStatic: true
+        }),
+        item6 = Bodies.rectangle(appWidth-50, appHeight*0.1, 100, 8, {
+            isStatic: true
+        }), // 起始块
+        item7 = Bodies.rectangle(appWidth/2-50-10, appHeight*0.72, 100, 8, {
+            isStatic: true
+        }),
+        item8 = Bodies.rectangle(appWidth*0.25, appHeight*0.35, 100, 8, {
+            isStatic: true
+        }),
+        item9 = Bodies.rectangle(appWidth*0.25, appHeight*0.50, 100, 8, {
+            isStatic: true
+        }),
+        item10 = Bodies.rectangle(appWidth*0.25, appHeight*0.65, 100, 8, {
+            isStatic: true
+        }),
+        item11 = Bodies.rectangle(66, appHeight*0.12+35, 132, 70, {
+            isStatic: true
+        }); // 终点块
     // 创建危险刚体
-    let test = Bodies.rectangle(appWidth/2+130, 530, 50, 50, {
+    let test = Bodies.rectangle(appWidth/2, appHeight-2, appWidth, 1, {
         isStatic: true,
         render: {
-            fillStyle: 'red'
+            fillStyle: 'black'
         }
     });
 
 
     // 创建成功体
-    aim = Bodies.rectangle(appWidth/2-130, 530, 50, 50, {
+    // TODO 终点位置
+    aim = Bodies.rectangle(66, appHeight*0.12-10, 20, 20, {
         isStatic: true,
         render: {
             fillStyle: 'green'
         }
     });
     // 主角
-    me = Bodies.circle(appWidth/2, wholeHeight-205, 10, {
+    me = Bodies.circle(appWidth-50, appHeight*0.06, 10, {
         density: 1, // 密度
         restitution: 0, // 弹性
         render: {
-            fillStyle: 'black'
+            fillStyle: 'white'
         }
     });
     // 安全墙体
     wall = Composite.create();
     Composite.add(wall, leftWall);
     Composite.add(wall, rightWall);
-    Composite.add(wall, ground);
+    // Composite.add(wall, ground);
     Composite.add(wall, ceil);
+    Composite.add(wall, item1);
+    Composite.add(wall, item2);
+    Composite.add(wall, item3);
+    Composite.add(wall, item4);
+    Composite.add(wall, item5);
+    Composite.add(wall, item6);
+    Composite.add(wall, item7);
+    Composite.add(wall, item8);
+    Composite.add(wall, item9);
+    Composite.add(wall, item10);
+    Composite.add(wall, item11);
     // 危险墙体
     dwall = Composite.create();
     Composite.add(dwall, test);
@@ -221,7 +266,7 @@ function playHistory() {
     historyPath.forEach( val => {
         // TODO 播放
         let past = document.createElement('div');
-        past.setAttribute('style', 'z-index:9999;position:fixed;width:20px;height:20px;border-radius: 100%;background: rgba(0,0,0,0.2);');
+        past.setAttribute('style', 'z-index:9999;position:fixed;width:20px;height:20px;border-radius: 100%;background: rgba(255,255,255,0.2);');
         pasts.push(past);
         document.body.appendChild(past);
         let cnt = 0;
@@ -245,11 +290,11 @@ function death() {
     // console.log(historyPath);
     // 原先的消失，me回起始点，重置firstStart
     World.remove(engine.world, me);
-    me = Bodies.circle(appWidth/2, wholeHeight-205, 10, {
+    me = Bodies.circle(appWidth-50, appHeight*0.06, 10, {
         density: 1, // 密度
         restitution: 0, // 弹性
         render: {
-            fillStyle: 'black'
+            fillStyle: 'white'
         }
     });
     World.add(engine.world, me);
@@ -265,11 +310,11 @@ function aimIt() {
     if(interval) clearInterval(interval);
     // 回到起点
     World.remove(engine.world, me);
-    me = Bodies.circle(appWidth/2, wholeHeight-205, 10, {
+    me = Bodies.circle(appWidth-50, appHeight*0.06, 10, {
         density: 1, // 密度
         restitution: 0, // 弹性
         render: {
-            fillStyle: 'black'
+            fillStyle: 'white'
         }
     });
     World.add(engine.world, me);
