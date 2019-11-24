@@ -92,6 +92,8 @@ function initScene() {
     });
 }
 
+let max1 = 0;
+
 // 摇杆
 function initNipple() {
     let controller = nipplejs.create({
@@ -106,8 +108,21 @@ function initNipple() {
         if(data.angle.degree<=90+30 && data.angle.degree>=90-30 && data.distance>=40) {
             bounce();
         }
-        // 给横向加速度
-        let force = Vector.create(x*0.015, 0);
+        let velocity = Math.sqrt(me.velocity.x*me.velocity.x + me.velocity.y*me.velocity.y);
+        if(max1<velocity) {
+            console.log(velocity);
+            max1=velocity;
+        }
+        let force;
+        let deac=0.05;
+        if(velocity>20) {
+            // 给反向加速度
+            force = Vector.create(-deac*me.velocity.x/velocity, -deac*me.velocity.y/velocity);
+        }else{
+            // 给横向加速度
+            force = Vector.create(x*0.015, 0);
+        }
+
         addForce(force);
     });
     controller.on('start', function() {
@@ -125,18 +140,21 @@ function initMap() {
     // 创建安全刚体
     let leftWall = Bodies.rectangle(-2, appHeight/2, 1, appHeight, {
             isStatic: true,
+            density: 100, // 密度
             render: {
                 fillStyle: 'black'
             }
         }),  // 左墙
         rightWall = Bodies.rectangle(appWidth-10, appHeight/2, 1, appHeight, {
             isStatic: true,
+            density: 100, // 密度
             render: {
                 fillStyle: 'black'
             }
         }),  // 右墙
         ceil = Bodies.rectangle(appWidth/2, -2, appWidth, 1, {
             isStatic: true,
+            density: 100, // 密度
             render: {
                 fillStyle: 'black'
             }
