@@ -128,8 +128,8 @@ function initMap() {
             render: {
                 fillStyle: 'black'
             }
-        }),           // 左墙
-        rightWall = Bodies.rectangle(appWidth+2, appHeight/2, 1, appHeight, {
+        }),  // 左墙
+        rightWall = Bodies.rectangle(appWidth-10, appHeight/2, 1, appHeight, {
             isStatic: true,
             render: {
                 fillStyle: 'black'
