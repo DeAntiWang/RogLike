@@ -137,14 +137,14 @@ function initNipple() {
 // 初始化地图
 function initMap() {
     // 创建安全刚体
-    let leftWall = Bodies.rectangle(-2, appHeight/2, 1, appHeight, {
+    let leftWall = Bodies.rectangle(0, appHeight/2, 1, appHeight, {
             isStatic: true,
             density: 100, // 密度
             render: {
                 fillStyle: 'black'
             }
         }),  // 左墙
-        rightWall = Bodies.rectangle(appWidth+2, appHeight/2, 1, appHeight, {
+        rightWall = Bodies.rectangle(appWidth, appHeight/2, 1, appHeight, {
             isStatic: true,
             density: 100, // 密度
             render: {
