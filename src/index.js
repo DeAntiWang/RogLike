@@ -20,9 +20,8 @@ let firstStart = true;  // 是否还未开始移动
 let historyPath = [];   // 历史路径
 let pasts = [];         // 之前的影子
 let interval=null;      // 现在正在跑的interval
-const savePathInterval=20; // 记录路径间隔
+const savePathInterval=1; // 记录路径间隔
 
-// TODO tap使用方式 反墙跳(import) 画一关的地图
 
 // 物理引擎
 function initScene() {
@@ -109,10 +108,10 @@ function initNipple() {
             bounce();
         }
         let velocity = Math.sqrt(me.velocity.x*me.velocity.x + me.velocity.y*me.velocity.y);
-        if(max1<velocity) {
-            console.log(velocity);
-            max1=velocity;
-        }
+        // if(max1<velocity) {
+        //     console.log(velocity);
+        //     max1=velocity;
+        // }
         let force;
         let deac=0.05;
         if(velocity>20) {
@@ -145,7 +144,7 @@ function initMap() {
                 fillStyle: 'black'
             }
         }),  // 左墙
-        rightWall = Bodies.rectangle(appWidth-10, appHeight/2, 1, appHeight, {
+        rightWall = Bodies.rectangle(appWidth+2, appHeight/2, 1, appHeight, {
             isStatic: true,
             density: 100, // 密度
             render: {
@@ -319,11 +318,11 @@ function death() {
     firstStart=true;
 }
 
+let noticeItem;
+
 // 胜利
 function aimIt() {
     console.log('success');
-    // 清理historyPath
-    historyPath = [];
     // 停止记录路径
     if(interval) clearInterval(interval);
     // 回到起点
@@ -336,7 +335,68 @@ function aimIt() {
         }
     });
     World.add(engine.world, me);
-    alert('success');
+    // alert('success');
+    noticeItem = document.createElement('div');
+    noticeItem.setAttribute('class', 'box-div');
+    let item = document.createElement('div');
+    let child = document.createElement('span');
+    let button = document.createElement('button');
+    button.setAttribute('class', 'btn');
+    item.setAttribute('class', 'success-notice');
+    button.setAttribute('onclick', 'deleNotice()');
+    button.innerHTML = 'OK';
+    child.innerHTML = 'Success';
+    item.appendChild(child);
+    item.appendChild(button);
+    noticeItem.appendChild(item);
+    document.body.appendChild(noticeItem);
+    playHistory();
+}
+
+function deleNotice() {
+    document.body.removeChild(noticeItem);
+    noticeItem=null;
+    World.remove(engine.world, me);
+    me = Bodies.circle(appWidth-50, appHeight*0.06, 10, {
+        density: 1, // 密度
+        restitution: 0, // 弹性
+        render: {
+            fillStyle: 'white'
+        }
+    });
+    World.add(engine.world, me);
+    // 清理historyPath
+    historyPath = [];
+}
+
+function startGame(){
+    let startbotton = document.createElement("botton");
+    startbotton.style='position:absolute;width:40%;top:86%;';
+    startbotton.style.margin="0 30%";
+    startbotton.style.backgroundColor='rgb(180,180,180)';
+    startbotton.style.textAlign="center";
+    startbotton.style.lineHeight="45px";
+    startbotton.innerHTML ="START";
+    startbotton.setAttribute('onclick','NewGame()');
+    startbotton.setAttribute('id','START');
+
+    let title = document.createElement("h1");
+    title.innerHTML ="Go with Failed";
+    title.setAttribute('id','TITLE');
+    title.style='position:absolute;width:100%;top:20%;text-align: center;color:white;';
+
+    document.getElementById("bottom").appendChild(title);
+
+    document.getElementById("bottom").appendChild(startbotton);
+}
+
+function NewGame(){
+    initNipple();
+    let a =document.getElementById("START");
+    a.style.display="none";
+    a=document.getElementById("TITLE");
+    a.style.display="none";
+
 }
 
 // 启动
@@ -345,5 +405,6 @@ window.onload = () => {
     appHeight = document.body.clientHeight-140;
     wholeHeight = document.body.clientHeight;
     initScene();
-    initNipple();
+    startGame();
+    // aimIt();
 };

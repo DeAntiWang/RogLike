@@ -38,11 +38,42 @@
 			left: 0;
 			z-index: 9999;
 		}
-
+		.box-div {
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			z-index: 10000;
+			top: 0;
+			left: 0;
+		}
+		.success-notice {
+			position: fixed;
+			width: 200px;
+			height: 150px;
+			left: calc(50% - 100px);
+			top: calc(50% - 75px);
+			z-index: 10000;
+			background: rgba(180,180,180,0.5);
+			color: white;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-around;
+			align-items: center;
+			border-radius: .8em;
+		}
+		.btn {
+			border: 1px solid transparent;
+			border-radius: 10px;
+			background: white;
+			width: 70px;
+			height: 30px;
+			cursor: pointer;
+		}
 	</style>
 </head>
 <body>
 <div id="static"></div>
+<div id="bottom"></div>
 <div id="notice"></div>
 </body>
 </html>
