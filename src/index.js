@@ -97,13 +97,17 @@ function initNipple() {
     let controller = nipplejs.create({
         zone: document.getElementById('static'),
         mode: 'static',
-        position: {left: 'calc(100% - 80px)', top: 'calc(100% - 70px)'},
+        position: {left: '50%', top: 'calc(100% - 70px)'},
         color: 'rgb(180,180,180)'
     });
     controller.on('move', function(evt, data) {
-        let x = data.position.x-appWidth+80;
+        let x = data.position.x-appWidth/2;
+        // 跳跃
+        if(data.angle.degree<=90+25 && data.angle.degree>=90-25 && data.distance>=40) {
+            bounce();
+        }
         // 给横向加速度
-        let force = Vector.create(x*0.005, 0);
+        let force = Vector.create(x*0.01, 0);
         addForce(force);
     });
     controller.on('start', function() {
@@ -189,7 +193,7 @@ function bounce() {
             interval = savePath(historyPath[pathId], me);
             firstStart=false;
         }
-        Body.applyForce(me, me.position, {x: 0, y: -50*0.51});
+        Body.applyForce(me, me.position, {x: 0, y: -50*0.7});
         canBounce=false;
     }
 }
