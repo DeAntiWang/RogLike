@@ -306,16 +306,20 @@ function death() {
     clearInterval(interval);
     // console.log(historyPath);
     // 原先的消失，me回起始点，重置firstStart
-    World.remove(engine.world, me);
-    me = Bodies.circle(appWidth-50, appHeight*0.06, 10, {
-        density: 1, // 密度
-        restitution: 0, // 弹性
-        render: {
-            fillStyle: 'white'
-        }
-    });
-    World.add(engine.world, me);
-    firstStart=true;
+    document.getElementById('static').style.display = 'none';
+    setTimeout( () => {
+        World.remove(engine.world, me);
+        me = Bodies.circle(appWidth-50, appHeight*0.06, 10, {
+            density: 1, // 密度
+            restitution: 0, // 弹性
+            render: {
+                fillStyle: 'white'
+            }
+        });
+        document.getElementById('static').style.display = 'block';
+        World.add(engine.world, me);
+        firstStart=true;
+    }, 100);
 }
 
 let noticeItem;
