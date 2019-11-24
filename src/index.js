@@ -103,11 +103,11 @@ function initNipple() {
     controller.on('move', function(evt, data) {
         let x = data.position.x-appWidth/2;
         // 跳跃
-        if(data.angle.degree<=90+25 && data.angle.degree>=90-25 && data.distance>=40) {
+        if(data.angle.degree<=90+30 && data.angle.degree>=90-30 && data.distance>=40) {
             bounce();
         }
         // 给横向加速度
-        let force = Vector.create(x*0.01, 0);
+        let force = Vector.create(x*0.015, 0);
         addForce(force);
     });
     controller.on('start', function() {
@@ -148,7 +148,7 @@ function initMap() {
             }
         }); // 地板
     // 创建危险刚体
-    let test = Bodies.rectangle(appWidth/2+100, 530, 50, 50, {
+    let test = Bodies.rectangle(appWidth/2+130, 530, 50, 50, {
         isStatic: true,
         render: {
             fillStyle: 'red'
@@ -157,16 +157,19 @@ function initMap() {
 
 
     // 创建成功体
-    aim = Bodies.rectangle(appWidth/2-100, 530, 50, 50, {
+    aim = Bodies.rectangle(appWidth/2-130, 530, 50, 50, {
         isStatic: true,
         render: {
             fillStyle: 'green'
         }
     });
     // 主角
-    me = Bodies.circle(appWidth/2, wholeHeight-205, 20, {
+    me = Bodies.circle(appWidth/2, wholeHeight-205, 10, {
         density: 1, // 密度
-        restitution: 0 // 弹性
+        restitution: 0, // 弹性
+        render: {
+            fillStyle: 'black'
+        }
     });
     // 安全墙体
     wall = Composite.create();
@@ -193,7 +196,7 @@ function bounce() {
             interval = savePath(historyPath[pathId], me);
             firstStart=false;
         }
-        Body.applyForce(me, me.position, {x: 0, y: -50*0.7});
+        Body.applyForce(me, me.position, {x: 0, y: -7});
         canBounce=false;
     }
 }
@@ -218,14 +221,14 @@ function playHistory() {
     historyPath.forEach( val => {
         // TODO 播放
         let past = document.createElement('div');
-        past.setAttribute('style', 'z-index:9999;position:fixed;width:40px;height:40px;border-radius: 100%;background: rgba(0,0,0,0.2);');
+        past.setAttribute('style', 'z-index:9999;position:fixed;width:20px;height:20px;border-radius: 100%;background: rgba(0,0,0,0.2);');
         pasts.push(past);
         document.body.appendChild(past);
         let cnt = 0;
         let player = setInterval( () => {
             if(val[cnt]!==undefined) {
-                past.style.left = val[cnt].x-20+'px';
-                past.style.top = val[cnt].y-20+'px';
+                past.style.left = val[cnt].x-10+'px';
+                past.style.top = val[cnt].y-10+'px';
             }else{
                 clearInterval(player);
                 // 影子不消失
@@ -242,9 +245,12 @@ function death() {
     // console.log(historyPath);
     // 原先的消失，me回起始点，重置firstStart
     World.remove(engine.world, me);
-    me = Bodies.circle(appWidth/2, wholeHeight-205, 20, {
+    me = Bodies.circle(appWidth/2, wholeHeight-205, 10, {
         density: 1, // 密度
-        restitution: 0 // 弹性
+        restitution: 0, // 弹性
+        render: {
+            fillStyle: 'black'
+        }
     });
     World.add(engine.world, me);
     firstStart=true;
@@ -257,6 +263,16 @@ function aimIt() {
     historyPath = [];
     // 停止记录路径
     if(interval) clearInterval(interval);
+    // 回到起点
+    World.remove(engine.world, me);
+    me = Bodies.circle(appWidth/2, wholeHeight-205, 10, {
+        density: 1, // 密度
+        restitution: 0, // 弹性
+        render: {
+            fillStyle: 'black'
+        }
+    });
+    World.add(engine.world, me);
     alert('success');
 }
 
