@@ -47,6 +47,8 @@ function initScene() {
     let wallsId = Composite.allBodies(wall).map(x => x.id);
     // 危险墙体内部成员ID
     let dwallsId = Composite.allBodies(dwall).map(x => x.id);
+    // aim墙体内部成员ID
+    let aimsId = Composite.allBodies(aim).map(x => x.id);
 
 
     // 把元素添加到世界中
@@ -82,8 +84,8 @@ function initScene() {
             }
             // 判断游戏成功
             if(
-                (val[0].id===me.id && val[1].id===aim.id) ||
-                (val[1].id===me.id && val[0].id===aim.id)
+                (val[0].id===me.id && aimsId.indexOf(val[1].id)!==-1) ||
+                (val[1].id===me.id && aimsId.indexOf(val[0].id)!==-1)
             ) {
                 aimIt();
             }
@@ -205,15 +207,20 @@ function initMap() {
         }
     });
 
+    let aim1 = Bodies.rectangle(66, appHeight*0.12-15, 1, 30, {
+            isStatic: true
+        }),
+        aim2 = Bodies.rectangle(66+10, appHeight*0.12-10-15, 20, 10, {
+            isStatic: true
+        });
+
 
     // 创建成功体
-    // TODO 终点位置
-    aim = Bodies.rectangle(66, appHeight*0.12-10, 20, 20, {
-        isStatic: true,
-        render: {
-            fillStyle: 'green'
-        }
-    });
+    // 终点位置
+    aim = Composite.create();
+    Composite.add(aim, aim1);
+    Composite.add(aim, aim2);
+
     // 主角
     me = Bodies.circle(appWidth-50, appHeight*0.06, 10, {
         density: 1, // 密度
@@ -304,7 +311,6 @@ function playHistory() {
 function death() {
     console.log('death');
     clearInterval(interval);
-    // console.log(historyPath);
     // 原先的消失，me回起始点，重置firstStart
     document.getElementById('static').style.display = 'none';
     setTimeout( () => {
@@ -405,6 +411,28 @@ function NewGame(){
 
 // 启动
 window.onload = () => {
+    let preX, preY;
+    setTimeout(()=>{
+        document.getElementsByTagName('canvas')[0].ontouchstart = evt => {
+            preX = evt.changedTouches[0].pageX;
+            preY = evt.changedTouches[0].pageY;
+        };
+        // document.getElementsByTagName('canvas')[0].ontouchmove = evt => {
+        //     evt.preventDefault();
+        // };
+        document.getElementsByTagName('canvas')[0].ontouchend = evt => {
+            let resX = evt.changedTouches[0].pageX;
+            let resY = evt.changedTouches[0].pageY;
+            let disX = resX-preX,
+                disY = resY-preY;
+            if((Math.abs(disY) > Math.abs(disX)) && (disY>0)) {
+                // pass
+                console.log('ok');
+            } else {
+                evt.preventDefault();
+            }
+        };
+    }, 50);
     appWidth = document.body.clientWidth;
     appHeight = document.body.clientHeight-140;
     wholeHeight = document.body.clientHeight;
